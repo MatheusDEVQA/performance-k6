@@ -1,16 +1,16 @@
 import { group } from "k6"
-import { getUser } from './Performance/EndPoints/GetUser.js'
+import { getUser } from './EndPoints/GetUser.js'
 
 export const options = {
     userAgent: 'k6-matheus-qa',
     thresholds: {
-        'http_req_durantion{type:ReqGetUser}': ['avg < 800'],
+        'http_req_duration{type:ReqGetUser}': ['avg < 800'],
         'http_reqs{type:ReqGetUser}': ['count > 0']
     },
     scenarios: {
         reqGetUser: {
             executor: 'ramping-arrival-rate',
-            statrtRate: 1,
+            startRate: 1,
             exec: 'ReqGetUser',
             timeUnit: '10s',
             preAllocatedVUs: 5,
