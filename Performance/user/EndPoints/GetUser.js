@@ -1,8 +1,9 @@
 import http from "k6/http";
 import { check, fail } from "k6";
 
-export default function () {
-    const url = 'https://reqres.in/api/users?page=2'
+export default function (pageData) {
+    
+    const url = `https://reqres.in/api/users?page=${pageData}`
 
     const params = {
        /* headers: {
@@ -13,7 +14,7 @@ export default function () {
         tags: {type: "ReqGetUser"}
     }
     let res = http.get(url, params)
-    
+
     const success = check(res,{ 
         'Is 200 to get User': (r) => r.status === 200
     },

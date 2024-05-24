@@ -1,5 +1,14 @@
 import { group } from "k6"
 import getUser from "./EndPoints/getUser.js"
+import { SharedArray } from "k6/data"
+import papaparse from 'https://jslib.k6.io/papaparse/5.1.1/index.js';
+import { getRandomItem } from "../../Helpers/GetRandom.js";
+
+const environment = 'staging'
+
+const pageDataGet = new SharedArray('User List Pages', function (){
+    return papaparse.parse(open(`../../Data/${environment}/pages.csv`), { header : true}).data;
+})
 
 export const options = {
     userAgent: 'k6-matheus-qa',
@@ -25,7 +34,10 @@ export const options = {
     }
 }
 export function reqGetUser() {
-    group("ReqGetUser", () => {
-        getUser()
+    group("ReqGetUser", function () {
+        let userData = getRandomItem(pageDataGet)
+        let pageData = userData.page
+        console.log(pageData)
+        getUser(pageData)
     })
 }
