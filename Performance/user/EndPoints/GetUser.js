@@ -16,7 +16,8 @@ export default function (pageData) {
     let res = http.get(url, params)
 
     const success = check(res,{ 
-        'Is 200 to get User': (r) => r.status === 200
+        'Is 200 to get User': (r) => r.status === 200,
+        'Is success to search user': (r) => r.body.localeCompare('response_body')
     },
     {
         type: "ReqGetUser"
