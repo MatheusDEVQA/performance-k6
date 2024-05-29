@@ -2,12 +2,13 @@ import { group } from "k6"
 import getUser from "./EndPoints/getUser.js"
 import { SharedArray } from "k6/data"
 import papaparse from 'https://jslib.k6.io/papaparse/5.1.1/index.js';
+import { setEnvironment } from "../../Helpers/SetEnvironment.js";
 import { getRandomItem } from "../../Helpers/GetRandom.js";
 
-const environment = 'staging'
+let configuration = setEnvironment();
 
-const pageDataGet = new SharedArray('User List Pages', function (){
-    return papaparse.parse(open(`../../Data/${environment}/pages.csv`), { header : true}).data;
+const pageDataGet = new SharedArray('User List Pages', function () {
+    return papaparse.parse(open(`../../Data/${__ENV.MY_ENV}/pages.csv`), { header: true }).data;
 })
 
 export const options = {
@@ -33,6 +34,11 @@ export const options = {
         }
     }
 }
+
+export function setup() {
+    return configuration
+}
+
 export function reqGetUser(data) {
     group("ReqGetUser", function () {
         let userData = getRandomItem(pageDataGet)
