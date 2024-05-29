@@ -4,6 +4,7 @@ import { SharedArray } from "k6/data"
 import papaparse from 'https://jslib.k6.io/papaparse/5.1.1/index.js';
 import { setEnvironment } from "../../Helpers/SetEnvironment.js";
 import { getRandomItem } from "../../Helpers/GetRandom.js";
+import postUser from "./EndPoints/PostUser.js";
 
 let configuration = setEnvironment();
 
@@ -15,6 +16,7 @@ export const options = {
     userAgent: 'k6-matheus-qa',
     thresholds: {
         'http_req_duration{type:ReqGetUser}': ['avg < 800'],
+        'http_req_duration{type:ReqPostUser}': ['avg< 800'],
 
         'http_reqs{type:ReqGetUser}': ['count > 0']
     },
@@ -31,6 +33,17 @@ export const options = {
             ]
 
 
+        },
+        reqPostUser: {
+            executor: 'ramping-arrival-rate',
+            startRate: 1,
+            exec: 'reqPostUser',
+            timeUnit: '5s',
+            preAllocatedVUs: 5,
+            stages: [
+                { target: 2, duration: '10s' },
+                { target: 3, duration: '5s' }
+            ]
         }
     }
 }
@@ -45,5 +58,12 @@ export function reqGetUser(data) {
         let pageData = userData.page
         console.log(pageData)
         getUser(data, pageData)
+    })
+}
+
+export function reqPostUser(data) {
+    group("Post User", () => {
+        let pageData
+        postUser(data, pageData)
     })
 }
