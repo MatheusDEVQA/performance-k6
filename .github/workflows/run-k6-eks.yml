@@ -1,0 +1,14 @@
+name: Run tests performance with k6 and eks
+
+on:
+  workflow_dispatch:
+    inputs:
+      context:
+        type: string
+        required: false
+
+jobs:
+  run-tests:
+    name: Run ${{ inputs.context }} performance test
+    runs-on: ubunt-latest
+    steps:
