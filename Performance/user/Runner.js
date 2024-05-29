@@ -33,11 +33,11 @@ export const options = {
         }
     }
 }
-export function reqGetUser() {
+export function reqGetUser(data) {
     group("ReqGetUser", function () {
         let userData = getRandomItem(pageDataGet)
         let pageData = userData.page
         console.log(pageData)
-        getUser(pageData)
+        getUser(data, pageData)
     })
 }

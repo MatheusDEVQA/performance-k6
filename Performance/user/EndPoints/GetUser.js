@@ -1,9 +1,9 @@
 import http from "k6/http";
 import { check, fail } from "k6";
 
-export default function (pageData) {
+export default function (configuration, pageData) {
     
-    const url = `https://reqres.in/api/users?page=${pageData}`
+    const url = `${configuration.baseUrl}?page=${pageData}`
 
     const params = {
        /* headers: {
