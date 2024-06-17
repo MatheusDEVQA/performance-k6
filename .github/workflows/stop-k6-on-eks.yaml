@@ -1,0 +1,40 @@
+name: "STOP k6 Performance Test"
+
+on:
+  workflow_dispatch:
+    inputs:
+        environment:
+          description: "Environment to STOP the test"
+          required: true
+          type: choice
+          options:
+            - staging
+            - sandbox
+          default: staging
+jobs:
+  run-k6-test:
+    name: Stop performance test
+    runs-on: ["self-hosted", "linux", "x64", "stg-tst-eks-x64-us-east-1"]
+    env:
+      ENVIRONMENT_ID: "243434334333333"
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with: 
+          role-to-assume: ${{ inputs.environment == 'sandbox' && format('arn:aws:iam::{0}:role/{1}-githubactions-runner-us-east-1', env.ENVIRONMENT_ID, inputs.environment) || format('arn:aws:iam::{0}:role/{1}-githubactions-runner-us-east-1', env.STAGING_ID, inputs.environment)}}
+          role-skip-session-tagging: true
+          aws-region: "us-east-1"
+      - name: Check repo
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            Performance
+            Data
+            Model
+      - name: Deleting file test
+        uses: kodermax/kubectl-aws-eks@main
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA_EKS }}
+        with:
+          args: delete -f ./metadata/customResource.yaml -n k6-operator
+          
